@@ -1,0 +1,22 @@
+{
+  "name": "FILM ASSET MAX - 數位暗房助理",
+  "short_name": "FilmAssetMax",
+  "description": "職人級底片資產管理與神聖暗房流程計時器",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#121212",
+  "theme_color": "#e67e22",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgZmlsbD0iIzEyMTIxMiIvPjxyZWN0IHg9IjE1NiIgeT0iODAiIHdpZHRoPSIyMDAiIGhlaWdodD0iMzUyIiBmaWxsPSJub25lIiBzdHJva2U9IiNGRkZGRkYiIHN0cm9rZS13aWR0aD0iMzIiIHJ4PSIzMiIvPjxwYXRoIGQ9Ik0xNTYgMTYwIEgzNTYiIHN0cm9rZT0iI0ZGRkZGRiIgc3Ryb2tlLXdpZHRoPSIzMiIvPjxwYXRoIGQ9Ik0xNTYgMzUyIEgzNTYiIHN0cm9rZT0iI0ZGRkZGRiIgc3Ryb2tlLXdpZHRoPSIzMiIvPjxyZWN0IHg9IjI2IiB5PSI4MCIgd2lkdGg9IjY0IiBoZWlnaHQ9IjgwIiBmaWxsPSIjRDM1NDAwIi8+PGNpcmNsZSBjeD0iMjU2IiBjeT0iMjU2IiByPSI0OCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjRkZGRkZGIi1zdHJva2Utd2lkdGg9IjI0Ii8+PC9zdmc+",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgZmlsbD0iIzEyMTIxMiIvPjxyZWN0IHg9IjE1NiIgeT0iODAiIHdpZHRoPSIyMDAiIGhlaWdodD0iMzUyIiBmaWxsPSJub25lIiBzdHJva2U9IiNGRkZGRkYiIHN0cm9rZS13aWR0aD0iMzIiIHJ4PSIzMiIvPjxwYXRoIGQ9Ik0xNTYgMTYwIEgzNTYiIHN0cm9rZT0iI0ZGRkZGRiIgc3Ryb2tlLXdpZHRoPSIzMiIvPjxwYXRoIGQ9Ik0xNTYgMzUyIEgzNTYiIHN0cm9rZT0iI0ZGRkZGRiIgc3Ryb2tlLXdpZHRoPSIzMiIvPjxyZWN0IHg9IjI2IiB5PSI4MCIgd2lkdGg9IjY0IiBoZWlnaHQ9IjgwIiBmaWxsPSIjRDM1NDAwIi8+PGNpcmNsZSBjeD0iMjU2IiBjeT0iMjU2IiByPSI0OCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjRkZGRkZGIi1zdHJva2Utd2lkdGg9IjI0Ii8+PC9zdmc+",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}

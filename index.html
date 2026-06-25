@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#121212">
+    <title>FILM ASSET MAX</title>
+    
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5MTIgNTEyIj48cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgZmlsbD0iIzEyMTIxMiIvPjxyZWN0IHg9IjE1NiIgeT0iODAiIHdpZHRoPSIyMDAiIGhlaWdodD0iMzUyIiBmaWxsPSJub25lIiBzdHJva2U9IiNGRkZGRkYiIHN0cm9rZS13aWR0aD0iMzIiIHJ4PSIzMiIvPjxwYXRoIGQ9Ik0xNTYgMTYwIEgzNTYiIHN0cm9rZT0iI0ZGRkZGRiIgc3Ryb2tlLXdpZHRoPSIzMiIvPjxwYXRoIGQ9Ik0xNTYgMzUyIEgzNTYiIHN0cm9rZT0iI0ZGRkZGRiIgc3Ryb2tlLXdpZHRoPSIzMiIvPjxyZWN0IHg9IjI2IiB5PSI4MCIgd2lkdGg9IjY0IiBoZWlnaHQ9IjgwIiBmaWxsPSIjRDM1NDAwIi8+PGNpcmNsZSBjeD0iMjU2IiBjeT0iMjU2IiByPSI0OCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjRkZGRkZGIi1zdHJva2Utd2lkdGg9IjI0Ii8+PC9zdmc+">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --bg-color: #f7f7f5; --card-bg: #ffffff; --text-main: #2d2d2d; --text-sub: #767676;
+            --accent: #d35400; --accent-hover: #e67e22; --border-light: #eaeaea;
+            --input-bg: #f0f0f0; --input-focus: #ffffff; --box-inner-bg: #f9f9f9;
+            --badge-shoot-bg: #f0f0f0; --badge-shoot-txt: #555;
+            --badge-unload-bg: #fff0e6; --badge-unload-txt: #d35400;
+            --badge-lab-bg: #f3e8ff; --badge-lab-txt: #7e22ce;
+            --badge-done-bg: #e6f6ec; --badge-done-txt: #1e7e34;
+            --status-good: #1e7e34; --status-warning: #ffebee; --status-danger: #ff3b30;
+        }
+
+        :root[data-theme="dark"] {
+            --bg-color: #121212; --card-bg: #1e1e1e; --text-main: #e8e8e8; --text-sub: #a0a0a0;
+            --accent: #e67e22; --accent-hover: #f39c12; --border-light: #333333;
+            --input-bg: #2c2c2c; --input-focus: #1a1a1a; --box-inner-bg: #252525;
+            --badge-shoot-bg: #333333; --badge-shoot-txt: #cccccc;
+            --badge-unload-bg: #4a2511; --badge-unload-txt: #f39c12;
+            --badge-lab-bg: #311b5e; --badge-lab-txt: #b388ff;
+            --badge-done-bg: #1b4526; --badge-done-txt: #69f0ae;
+            --status-good: #69f0ae; --status-warning: #ff7700; --status-danger: #ff3b30;
+        }
+
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: var(--bg-color); color: var(--text-main); margin: 0; 
+            padding: env(safe-area-inset-top) 15px calc(110px + env(safe-area-inset-bottom)); 
+            line-height: 1.5; transition: background-color 0.3s ease, color 0.3s ease; 
+        }
+        
+        .header-container { display: flex; justify-content: space-between; align-items: center; margin: 20px 0 30px; }
+        h2 { margin: 0; font-weight: 800; font-size: 24px; letter-spacing: 1px; color: var(--text-main); }
+        .theme-toggle { background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 50%; height: 44px; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-main); transition: 0.3s; box-shadow: 0 2px 8px rgba(0,0,0,0.05); -webkit-tap-highlight-color: transparent; flex-shrink: 0; }
+        .btn-gear-room { width: auto; padding: 0 16px; border-radius: 22px; font-size: 15px; font-weight: 700; margin-right: 10px; }
+        .btn-round { width: 44px; border-radius: 50%; }
+        
+        .section-title { font-size: 14px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; letter-spacing: 1.5px; margin: 35px 0 15px 5px; display: flex; justify-content: space-between; align-items: center; }
+
+        .card { background: var(--card-bg); padding: 20px; border-radius: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.04); border: 1px solid var(--border-light); margin-bottom: 20px; transition: all 0.3s ease; }
+        .fridge-card { border: 1px dashed var(--border-light); }
+
+        label { display: block; margin-top: 16px; font-weight: 600; font-size: 13px; color: var(--text-main); margin-bottom: 6px; }
+        .input-group { display: flex; gap: 8px; align-items: center; }
+        
+        select, input { 
+            width: 100%; padding: 14px 12px; border: 1px solid transparent; border-radius: 12px; 
+            font-size: 16px !important; box-sizing: border-box; background-color: var(--input-bg); 
+            color: var(--text-main); transition: all 0.2s ease; outline: none; appearance: none; 
+            color-scheme: dark light;
+            -webkit-user-select: text !important; user-select: text !important; -webkit-touch-callout: default !important;
+        }
+        select:focus, input:focus { background-color: var(--input-focus); border: 1px solid var(--accent); }
+        .input-group select, .input-group input { flex: 1; margin-top: 0; }
+
+        button { font-family: inherit; transition: all 0.2s ease; outline: none; -webkit-tap-highlight-color: transparent; }
+        .btn-inline { background-color: var(--input-bg); color: var(--text-main); border: none; border-radius: 10px; padding: 12px; font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
+        .btn-add { background-color: var(--text-main); color: var(--bg-color); border: none; border-radius: 10px; padding: 0 16px; height: 48px; font-size: 14px; font-weight: bold; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+        
+        .btn-main { width: 100%; padding: 16px; background-color: var(--text-main); color: var(--bg-color); border: none; border-radius: 14px; font-size: 16px; font-weight: 700; margin-top: 25px; cursor: pointer; letter-spacing: 0.5px; }
+        .btn-main.update-btn { background-color: var(--accent); color: white; }
+        .btn-export { width: 100%; padding: 16px; background-color: var(--card-bg); color: var(--text-main); border: 1px solid var(--border-light); border-radius: 14px; font-size: 15px; font-weight: 700; margin-top: 15px; margin-bottom: 15px; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
+        
+        .record-item { background: var(--card-bg); padding: 20px; border-radius: 16px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid var(--border-light); position: relative; overflow: hidden; }
+        .record-item::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--text-main); border-radius: 4px 0 0 4px; }
+        .record-item h4 { margin: 0 0 10px 0; color: var(--text-main); font-size: 18px; font-weight: 800; }
+        .record-item p { margin: 6px 0; font-size: 14px; color: var(--text-sub); }
+        .record-cost { color: var(--accent); font-weight: 700; font-family: monospace; font-size: 15px; }
+        
+        .fridge-item { display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); padding: 12px 16px; border-radius: 12px; margin-bottom: 10px; font-size: 15px; border: 1px solid var(--border-light); gap: 10px;}
+        
+        .status-badge { display: inline-block; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; margin-bottom: 12px; letter-spacing: 0.5px; }
+        .status-shooting { background: var(--badge-shoot-bg); color: var(--badge-shoot-txt); }
+        .status-unloaded { background: var(--badge-unload-bg); color: var(--badge-unload-txt); }
+        .status-lab { background: var(--badge-lab-bg); color: var(--badge-lab-txt); }
+        .status-done { background: var(--badge-done-bg); color: var(--badge-done-txt); }
+        .push-badge { background: #ffebee; color: #d32f2f; }
+        :root[data-theme="dark"] .push-badge { background: #4a1515; color: #ff8a80; }
+
+        .btn-quick-action { width: 100%; padding: 12px; background-color: transparent; color: var(--text-main); border: 1px dashed var(--border-light); border-radius: 12px; font-size: 14px; font-weight: 600; margin-top: 15px; cursor: pointer; }
+        .action-buttons { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; padding-top: 15px; border-top: 1px solid var(--border-light); }
+        .action-buttons button { flex: 1; min-width: 60px; padding: 10px 4px; border: none; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; }
+        .btn-edit { background-color: var(--input-bg); color: var(--text-main); }
+        .btn-share { background-color: var(--text-main); color: var(--bg-color); }
+        .btn-link { background-color: var(--badge-shoot-bg); color: var(--text-main); }
+        .btn-delete { background-color: var(--badge-unload-bg); color: var(--badge-unload-txt); }
+        
+        .flex-row { display: flex; flex-wrap: wrap; gap: 12px; }
+        .flex-row > div { flex: 1; min-width: 120px; }
+        .hidden-group { display: none; padding: 15px; background: var(--box-inner-bg); border-radius: 14px; margin-top: 15px; border: 1px solid var(--border-light); }
+        .inner-box { margin-top:8px; padding:10px; background:var(--box-inner-bg); border-radius:8px; border: 1px solid var(--border-light); }
+
+        /* 戰情儀表板與 Chart 配置 */
+        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+        @media (max-width: 768px) { .dashboard-grid { grid-template-columns: 1fr; } }
+        .dash-card { background: var(--card-bg); padding: 16px; border-radius: 16px; border: 1px solid var(--border-light); display: flex; flex-direction: column; justify-content: center; }
+        .dash-card.full-width { grid-column: 1 / -1; }
+        .dash-card h4 { margin: 0 0 8px 0; font-size: 13px; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.5px; }
+        .dash-card .value { font-size: 26px; font-weight: 800; color: var(--text-main); margin: 0; line-height: 1.2; }
+        .dash-card .value.accent { color: var(--accent); }
+        .chart-container { position: relative; width: 100%; height: 200px; margin-top: 10px; }
+
+        /* 暗房模擬控制台特定樣式 */
+        .darkroom-panel { background: #050000; border: 2px solid #440000; color: #ff3b30; }
+        .darkroom-timer { font-size: 4.5rem; font-weight: 200; font-variant-numeric: tabular-nums; text-align: center; color: #ff453a; text-shadow: 0 0 20px rgba(255,59,48,0.3); line-height: 1; margin: 15px 0; }
+        @keyframes flashDanger { 0%, 100% { color: #ff0000; text-shadow: 0 0 20px #ff0000; } 50% { color: #fff; text-shadow: 0 0 40px #fff; } }
+        .pour-out-mode { animation: flashDanger 0.5s infinite; font-weight: bold; }
+        .workflow-list { list-style: none; margin-top: 15px; height: 220px; overflow-y: auto; padding-right: 5px; border-top: 1px solid #440000; border-bottom: 1px solid #440000; padding-top: 10px; font-size: 0.85rem; }
+        .workflow-item { padding: 6px 8px; border-bottom: 1px dashed #2a0000; color: #551111; display: flex; justify-content: space-between; align-items: center; }
+        .workflow-item.active { color: #ff3b30; border-left: 3px solid #ff453a; padding-left: 12px; background: rgba(255,255,255,0.05); font-weight: bold; }
+        .workflow-item.completed { color: #00ff66; text-decoration: line-through; opacity: 0.3; }
+        .agitation-desc { font-size: 1rem; color: #ccc; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 6px; border-left: 3px solid #ff453a; margin-top: 10px; white-space: pre-wrap; }
+
+        /* 懸浮按鈕 FAB */
+        .fab {
+            position: fixed; right: 20px; bottom: calc(20px + env(safe-area-inset-bottom));
+            display: flex; align-items: center; justify-content: center;
+            width: 72px; height: 72px; border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #ff5252, #d32f2f 70%, #9a0000);
+            border: 4px solid #e8e8e8;
+            box-shadow: 0 12px 24px rgba(0,0,0,0.15), inset 0 4px 6px rgba(255,255,255,0.4), inset 0 -4px 6px rgba(0,0,0,0.2);
+            cursor: pointer; transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1); z-index: 100; -webkit-tap-highlight-color: transparent;
+        }
+        .fab:active { transform: scale(0.92); }
+
+        /* Modal 彈出視窗 */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+            z-index: 200; display: none; justify-content: center; align-items: flex-end;
+            padding-bottom: env(safe-area-inset-bottom); opacity: 0; transition: opacity 0.3s ease;
+        }
+        .modal-overlay.show { opacity: 1; display: flex; }
+        .modal-content {
+            background: var(--bg-color); width: 100%; max-height: 90vh;
+            border-radius: 24px 24px 0 0; padding: 25px 20px 40px; overflow-y: auto;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.1); transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.1, 0.8, 0.2, 1);
+        }
+        .modal-overlay.show .modal-content { transform: translateY(0); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .modal-header h3 { margin: 0; font-size: 20px; }
+        .btn-close { background: var(--input-bg); color: var(--text-main); border: none; width: 36px; height: 36px; border-radius: 18px; font-size: 16px; cursor: pointer; display: flex; justify-content: center; align-items: center; }
+
+        .search-bar { background: var(--input-bg); display: flex; align-items: center; border-radius: 12px; padding: 0 12px; margin-bottom: 15px; border: 1px solid var(--border-light); }
+        .search-bar input { border: none; padding: 14px 8px; background: transparent; width: 100%; outline: none; }
+
+        .gear-tabs { display: flex; gap: 8px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; }
+        .gear-tabs button { flex: 1; padding: 10px; border-radius: 10px; border: 1px solid var(--border-light); background: var(--input-bg); color: var(--text-main); font-weight: 600; white-space: nowrap; cursor: pointer; }
+        .gear-tabs button.active { background: var(--text-main); color: var(--bg-color); border-color: var(--text-main); }
+        .gear-list { display: flex; flex-direction: column; gap: 10px; max-height: 50vh; overflow-y: auto; }
+        .gear-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: var(--box-inner-bg); border-radius: 12px; border: 1px solid var(--border-light); }
+        .gear-item span { font-weight: 600; font-size: 15px; display: block; }
+        .gear-item-meta { font-size: 12px; color: var(--text-sub); display: block; margin-top: 4px; }
+        .gear-actions { display: flex; gap: 8px; }
+        .gear-actions button { padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; }
+        .btn-gear-edit { background: var(--badge-shoot-bg); color: var(--text-main); }
+        .btn-gear-del { background: var(--badge-unload-bg); color: var(--badge-unload-txt); }
+    </style>
+</head>
+<body>
+
+    <div class="header-container">
+        <h2>🎞️ FILM ASSET</h2>
+        <div style="display: flex;">
+            <button class="theme-toggle btn-gear-room" onclick="openGearRoom('camera')">⚙️ 器材室</button>
+            <button class="theme-toggle btn-round" id="themeBtn">🌗</button>
+        </div>
+    </div>
+
+    <div class="section-title">
+        <span>Inventory (冰箱)</span>
+        <button class="btn-inline" style="padding: 6px 12px; font-size: 12px;" onclick="toggleFridge()">展開 / 收起</button>
+    </div>
+    <div class="card fridge-card" id="fridgeArea" style="display: none;">
+        <div class="input-group">
+            <select id="invFilmSelect"></select>
+            <input type="number" id="invQty" placeholder="數量" style="width: 70px; flex: none;">
+            <input type="number" id="invCost" placeholder="單價$" style="width: 80px; flex: none;">
+        </div>
+        <div class="flex-row" style="margin-top: 10px;">
+            <div>
+                <label style="margin-top: 0; font-size:12px;">購入日期</label>
+                <div class="input-group">
+                    <input type="date" id="invPurchaseDate">
+                    <button type="button" class="btn-inline" onclick="toggleUnknownDate('invPurchaseDate')" style="padding: 14px 10px;">未知</button>
+                </div>
+            </div>
+            <div>
+                <label style="margin-top: 0; font-size:12px;">有效期限</label>
+                <div class="input-group">
+                    <input type="date" id="invExpiryDate">
+                    <button type="button" class="btn-inline" onclick="toggleUnknownDate('invExpiryDate')" style="padding: 14px 10px;">未知</button>
+                </div>
+            </div>
+        </div>
+        <button class="btn-main" style="margin-top: 15px; padding: 14px;" onclick="addInventory()">➕ 存入批次</button>
+        <div id="inventoryList" style="margin-top: 20px;"></div>
+    </div>
+
+    <div class="section-title">
+        <span>Dashboard (戰情儀表板)</span>
+        <button class="btn-inline" style="padding: 6px 12px; font-size: 12px;" onclick="toggleStats()">展開 / 收起</button>
+    </div>
+    <div id="statsContainer" style="display: none; padding-bottom: 10px;">
+        <div id="statsArea"></div>
+        <div class="dashboard-grid" id="chartZone" style="margin-top: 12px;">
+            <div class="dash-card">
+                <h4>🎞️ 常用膠卷比例</h4>
+                <div class="chart-container"><canvas id="filmChart"></canvas></div>
+            </div>
+            <div class="dash-card">
+                <h4>📷 器材出片熱度 (卷)</h4>
+                <div class="chart-container"><canvas id="gearChart"></canvas></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-title">
+        <span>🎛️ Digital Darkroom (數位暗房控制台)</span>
+        <button class="btn-inline" style="padding: 6px 12px; font-size: 12px;" onclick="toggleDarkroomConsole()">展開 / 收起</button>
+    </div>
+    <div class="card darkroom-panel" id="darkroomConsole" style="display: none;">
+        <div id="drSafetyAlert" style="background:#550000; color:#ff9500; padding:10px; border-radius:8px; font-size:13px; font-weight:700; margin-bottom:12px; display:none;">⚠️ 警告：計算顯影時間低於 5 分鐘！容易造成顯影不均。</div>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span id="drCurrentStage" style="font-weight:bold; font-size:14px; letter-spacing:1px;">READY</span>
+            <span id="drTotalRemaining" style="font-family:monospace; font-size:14px;">總剩餘: --:--</span>
+        </div>
+        <div class="darkroom-timer" id="drTimerDisplay">00:00</div>
+        <div class="agitation-desc" id="drAgitationDesc">尚未開始沖洗流程。請勾選是否需要預濕，並點擊下方按鈕開始。</div>
+        
+        <label style="color:#ff8a80; display:flex; align-items:center; gap:8px; font-size:14px; cursor:pointer; margin-top:12px;">
+            <input type="checkbox" id="drPreWetCheck" onchange="buildWorkflow()" style="width:18px; height:18px; margin:0;"> 啟用預濕步驟 (Pre-wet)
+        </label>
+
+        <ul class="workflow-list" id="drWorkflowList"></ul>
+        <div class="btn-grid" style="display:flex; gap:10px; margin-top:15px;">
+            <button class="btn-main update-btn" id="drStartBtn" onclick="startDarkroomTimer()" style="margin-top:0; flex:1; background:#ff3b30; color:#050000;">⚡ 開始此步驟</button>
+            <button class="btn-main" id="drNextBtn" onclick="nextDarkroomStep()" style="margin-top:0; flex:1; background:#222; color:#ff3b30; border:1px solid #440000; display:none;">✔️ 完成，下一步</button>
+        </div>
+    </div>
+
+    <div class="section-title">
+        <span>Archive (資產庫)</span>
+        <select id="filterStatus" onchange="renderRecords()" style="width: auto; padding: 4px 10px; font-size: 13px !important; border-radius: 8px; border: 1px solid var(--border-light); background-color: var(--input-bg); color: var(--text-main);">
+            <option value="全部">顯示全部</option>
+            <option value="拍攝中">📷 拍攝中</option>
+            <option value="已退片">🎞️ 已退片</option>
+            <option value="送洗中">🧪 送洗中</option>
+            <option value="已完成">✅ 已完成</option>
+        </select>
+    </div>
+    
+    <div class="search-bar">
+        <span>🔍</span>
+        <input type="text" id="searchInput" onkeyup="renderRecords()" placeholder="搜尋專案、標籤、相機、底片...">
+    </div>
+
+    <div id="recordList"></div>
+    
+    <div style="margin-top: 40px; padding-top: 20px; border-top: 1px dashed var(--border-light);">
+        <button class="btn-export" onclick="exportToCSV()">📥 匯出 CSV 報表資料</button>
+        <button class="btn-export" style="margin-top: 0; background-color: var(--badge-shoot-bg);" onclick="exportBackup()">📦 匯出全部資料 (備份用)</button>
+        <label for="importBackup" class="btn-export" style="margin-top: 0; margin-bottom: 40px; background-color: var(--badge-done-bg); text-align: center; display: block; box-sizing: border-box; cursor: pointer;">🔄 匯入資料備份 (覆蓋當前資料)</label>
+        <input type="file" id="importBackup" accept=".json" style="display: none;" onchange="importBackupFile(event)">
+    </div>
+
+    <button class="fab" onclick="openMainForm(-1)">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.8" stroke-linejoin="round">
+            <rect x="6" y="4" width="12" height="16" rx="2"></rect>
+            <path d="M9 4 V2 H15 V4"></path>
+            <path d="M6 8 H18"></path>
+            <path d="M6 16 H18"></path>
+        </svg>
+    </button>
+
+    <div id="mainFormModal" class="modal-overlay" onclick="closeModalOnBg(event, 'mainFormModal')">
+        <div class="modal-content">
+            <div class="modal-header"><h3 id="formModalTitle">新增紀錄</h3><button class="btn-close" onclick="closeModal('mainFormModal')">✕</button></div>
+            <label>狀態追蹤 Status</label>
+            <select id="status" onchange="toggleDynamicFields()">
+                <option value="拍攝中">📷 拍攝中 (Loaded)</option>
+                <option value="已退片">🎞️ 已退片 (Unloaded)</option>
+                <option value="送洗中">🧪 送洗中 (At Lab)</option>
+                <option value="已完成">✅ 已完成歸檔 (Archived)</option>
+            </select>
+            <div class="flex-row">
+                <div style="flex: 1.5;"><label>相機 Camera</label><div class="input-group"><select id="camera" onchange="autoSetFormat()"></select><button class="btn-add" onclick="openGearEditor('camera', -1)">➕</button></div></div>
+                <div style="flex: 1;"><label>片幅 Format</label><select id="format" disabled><option value="全幅">全幅</option><option value="半格">半格</option><option value="120">120</option></select></div>
+            </div>
+            <label>底片型號 Film Stock</label><div class="input-group"><select id="film"></select><button class="btn-add" onclick="openGearEditor('film', -1)">➕</button></div>
+            <button type="button" class="btn-quick-action" onclick="toggleTechFields()">⚙️ 專業技術設定 (鏡頭/光源/ISO)</button>
+            <div id="techFields" class="hidden-group">
+                <label>感光度 ISO (Push/Pull)</label>
+                <select id="iso"><option value="正常">正常拍攝 Box Speed</option><option value="增感+1">增感 Push +1</option><option value="增感+2">增感 Push +2</option><option value="減感-1">減感 Pull -1</option></select>
+                <label>搭配鏡頭 Lens</label><div class="input-group"><select id="lens"></select><button class="btn-add" onclick="openGearEditor('lens', -1)">➕</button></div>
+                <label>主要光源 Lighting</label><select id="lighting"><option value="自然光為主">自然光為主</option><option value="室內人造光源">室內人造光源</option><option value="混合光源">混合光源</option><option value="閃光燈/棚燈">閃光燈/棚燈</option></select>
+            </div>
+            <div id="dateFields">
+                <label>上片日期 Date Loaded</label><div class="input-group"><input type="date" id="loadDate"><button type="button" class="btn-inline" onclick="toggleUnknownDate('loadDate')">不可考</button></div>
+                <div id="unloadDateContainer" style="display: none;"><label>退片日期 Date Unloaded</label><div class="input-group"><input type="date" id="unloadDate"><button type="button" class="btn-inline" onclick="toggleUnknownDate('unloadDate')">不可考</button></div></div>
+                <div id="labDateContainer" style="display: none;">
+                    <label>送洗店家 Lab</label><div class="input-group" style="margin-bottom: 10px;"><select id="lab"></select><button class="btn-add" onclick="openGearEditor('lab', -1)">➕</button></div>
+                    <label>送洗日期 Date to Lab</label><div class="input-group"><input type="date" id="labDate"><button type="button" class="btn-inline" onclick="toggleUnknownDate('labDate')">不可考</button></div>
+                </div>
+            </div>
+            <div id="costArchiveFields" class="hidden-group">
+                <div class="flex-row"><div><label>底片成本 (NT$)</label><input type="number" id="filmCost" placeholder="450"></div><div><label>沖掃費用 (NT$)</label><input type="number" id="labCost" placeholder="200"></div></div>
+                <label>數位檔案連結 Drive URL</label><input type="url" id="driveLink" placeholder="貼上連結">
+            </div>
+            <label>專案備註 Notes</label><input type="text" id="notes" placeholder="拍攝主題、#專案名稱..."><button id="saveBtn" class="btn-main" onclick="saveRecord()">儲存紀錄</button>
+        </div>
+    </div>
+
+    <div id="gearRoomModal" class="modal-overlay" onclick="closeModalOnBg(event, 'gearRoomModal')">
+        <div class="modal-content" style="height: 85vh;">
+            <div class="modal-header"><h3>⚙️ 器材室主檔管理</h3><button class="btn-close" onclick="closeModal('gearRoomModal')">✕</button></div>
+            <div class="gear-tabs"><button id="tab-camera" onclick="switchGearTab('camera')">相機</button><button id="tab-film" onclick="switchGearTab('film')">底片</button><button id="tab-lens" onclick="switchGearTab('lens')">鏡頭</button><button id="tab-lab" onclick="switchGearTab('lab')">店家</button></div>
+            <button class="btn-main" style="margin-top: 0; margin-bottom: 15px; padding: 12px;" onclick="triggerAddGearFromRoom()">➕ 新增項目</button>
+            <div id="gearList" class="gear-list"></div>
+        </div>
+    </div>
+
+    <div id="gearEditModal" class="modal-overlay" onclick="closeModalOnBg(event, 'gearEditModal')" style="z-index: 300;">
+        <div class="modal-content">
+            <div class="modal-header"><h3 id="gearEditTitle">新增項目</h3><button class="btn-close" onclick="closeModal('gearEditModal')">✕</button></div>
+            <input type="hidden" id="geType"><input type="hidden" id="geIndex"><label id="geNameLabel">完整名稱：</label><input type="text" id="geName" placeholder="例如: Nikon FM2">
+            <div id="geFormatContainer" style="display:none;"><label>片幅：</label><select id="geFormat"><option value="全幅">全幅</option><option value="半格">半格</option><option value="120">120</option></select></div>
+            <div id="geFilmMetaContainer" style="display:none;" class="flex-row"><div><label>感光度 (ISO)：</label><input type="number" id="geIso" placeholder="400"></div><div><label>預設張数：</label><input type="number" id="geExposures" placeholder="36"></div></div>
+            <button class="btn-main update-btn" onclick="saveGearItem()">💾 儲存</button>
+        </div>
+    </div>
+
+    <div id="quickLoadModal" class="modal-overlay" onclick="closeModalOnBg(event, 'quickLoadModal')">
+        <div class="modal-content">
+            <div class="modal-header"><h3>📷 快速上片</h3><button class="btn-close" onclick="closeModal('quickLoadModal')">✕</button></div>
+            <p id="qlFilmNameDisplay" style="font-weight:700; color:var(--accent); font-size:18px; margin-top:0;"></p>
+            <label>請選擇使用的相機：</label><select id="qlCamera"></select>
+            <label>設定 ISO (有無增減感)：</label>
+            <select id="qlIso"><option value="正常">正常拍攝 Box Speed</option><option value="增感+1">增感 Push +1</option><option value="增感+2">增感 Push +2</option><option value="減感-1">減感 Pull -1</option></select>
+            <button class="btn-main" onclick="confirmQuickLoad()">🚀 確認上片</button>
+        </div>
+    </div>
+
+    <div id="smartActionModal" class="modal-overlay" onclick="closeModalOnBg(event, 'smartActionModal')">
+        <div class="modal-content">
+            <div class="modal-header"><h3 id="saTitle">智慧處理</h3><button class="btn-close" onclick="closeModal('smartActionModal')">✕</button></div>
+            <div id="saLabSection" style="display:none;"><label>請選擇送洗店家：</label><select id="saLab"></select></div>
+            <div id="saDoneSection" style="display:none;">
+                <label>沖掃費用 (NT$)：</label><input type="number" id="saLabCost" placeholder="200">
+                <label>數位檔案連結：</label><input type="url" id="saDriveLink" placeholder="貼上連結...">
+            </div>
+            <button class="btn-main update-btn" onclick="confirmSmartAction()">確認送出</button>
+        </div>
+    </div>
+
+    <script>
+        let memoryStorage = {};
+        function safeGetStorage(key) { try { return localStorage.getItem(key); } catch(e) { return memoryStorage[key] || null; } }
+        function safeSetStorage(key, value) { try { localStorage.setItem(key, value); } catch(e) { memoryStorage[key] = value; } }
+        function safeParse(key, defaultValue) { try { const val = safeGetStorage(key); return val ? JSON.parse(val) : defaultValue; } catch(e) { return defaultValue; } }
+
+        let customCameras = [], customFilms = [], customLenses = [], customLabs = [];
+        let filmRecords = safeParse('filmTrackerRecords', []);
+        let inventory = safeParse('filmInventory', []);
+        let filmChartInstance = null, gearChartInstance = null;
+
+        function initDatabase() {
+            let isGearInit = safeParse('isGearInit_v7', false);
+            if (!isGearInit) {
+                const defCams = [ { name: "Nikon FM2", format: "全幅" }, { name: "Leica M6", format: "全幅" }, { name: "Olympus Pen EE-3", format: "半格" } ];
+                const defFilms = [ { name: "Kodak Portra 400", iso: 400, exposures: 36 }, { name: "Kodak Gold 200", iso: 200, exposures: 36 } ];
+                const defLenses = [ { name: "未記錄" }, { name: "35mm" }, { name: "50mm" } ];
+                const defLabs = [ { name: "未指定" }, { name: "ILFORDTWLAB" } ];
+
+                customCameras = defCams; customFilms = defFilms; customLenses = defLenses; customLabs = defLabs;
+                saveAllGear(); safeSetStorage('isGearInit_v7', true);
+            } else {
+                customCameras = safeParse('customCameras', []);
+                customFilms = safeParse('customFilms', []);
+                customLenses = safeParse('customLenses', []);
+                customLabs = safeParse('customLabs', []);
+            }
+        }
+
+        function initApp() {
+            const savedTheme = safeGetStorage('theme');
+            if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) document.documentElement.setAttribute('data-theme', 'dark');
+            document.getElementById('invPurchaseDate').valueAsDate = new Date();
+            initDatabase(); renderDropdowns(); renderInventory(); renderRecords(); renderStats(); buildWorkflow();
+        }
+
+        document.getElementById('themeBtn').addEventListener('click', function() {
+            if (document.documentElement.getAttribute('data-theme') === 'dark') { document.documentElement.removeAttribute('data-theme'); safeSetStorage('theme', 'light'); } 
+            else { document.documentElement.setAttribute('data-theme', 'dark'); safeSetStorage('theme', 'dark'); }
+            renderStats(); // 刷新圖表配色
+        });
+
+        function openModal(id) { const m = document.getElementById(id); m.style.display = 'flex'; setTimeout(() => m.classList.add('show'), 10); }
+        function closeModal(id) { const m = document.getElementById(id); m.classList.remove('show'); setTimeout(() => m.style.display = 'none', 300); }
+        function closeModalOnBg(e, id) { if(e.target.id === id) closeModal(id); }
+        function toggleUnknownDate(id) { const el = document.getElementById(id); if(el.type === 'text') { el.type = 'date'; el.value = ''; } else { el.type = 'text'; el.value = '不可考'; } }
+        function applyDateVal(id, val) { const el = document.getElementById(id); if (val === '不可考') { el.type = 'text'; el.value = '不可考'; } else { el.type = 'date'; el.value = val || ''; } }
+        function toggleFridge() { const area = document.getElementById('fridgeArea'); area.style.display = area.style.display === 'none' ? 'block' : 'none'; }
+        
+        function toggleStats() { 
+            const container = document.getElementById('statsContainer'); 
+            container.style.display = container.style.display === 'none' ? 'block' : 'none'; 
+            if(container.style.display === 'block') { renderStatsCharts(); }
+        }
+        function toggleDarkroomConsole() { const dr = document.getElementById('darkroomConsole'); dr.style.display = dr.style.display === 'none' ? 'block' : 'none'; }
+        function toggleTechFields() { const area = document.getElementById('techFields'); area.style.display = area.style.display === 'none' || area.style.display === '' ? 'block' : 'none'; }
+
+        /* ================= 🎛️ 網頁原生暗房模擬引擎 ================= */
+        let drWorkflow = [];
+        let drCurrentIndex = 0;
+        let drTimer = null;
+        let audioCtx = null;
+
+        function playBeep(freq, duration) {
+            try {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                osc.type = 'sine'; osc.frequency.value = freq;
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(); setTimeout(() => osc.stop(), duration);
+            } catch(e) {}
+        }
+
+        function buildWorkflow() {
+            drWorkflow = [];
+            const enablePreWet = document.getElementById('drPreWetCheck').checked;
+            
+            if (enablePreWet) {
+                drWorkflow.push({ name: "預濕 (PRE-WET)", total: 60, type: "timed", desc: "控溫與潤濕乳劑，前30秒連續翻轉，後30秒靜置。" });
+            }
+
+            let devTotal = 300; 
+            if (devTotal < 300) document.getElementById('drSafetyAlert').style.display = "block";
+            else document.getElementById('drSafetyAlert').style.display = "none";
+
+            let rem = devTotal - 30 - 10; 
+            drWorkflow.push({ name: "顯影: 首期攪拌", total: 30, type: "timed", stage: "dev", desc: "連續翻轉與敲擊罐底排氣泡。" });
+
+            let round = 1;
+            while (rem >= 30) {
+                drWorkflow.push({ name: "顯影: Round " + round + " 靜置", total: 25, type: "timed", stage: "dev", desc: "靜置等待化學反應。" });
+                drWorkflow.push({ name: "顯影: Round " + round + " 攪拌", total: 5, type: "timed", stage: "dev", desc: "週期攪拌：翻轉倒置2次。" });
+                rem -= 30; round++;
+            }
+            if (rem > 0) {
+                drWorkflow.push({ name: "顯影: 最終靜置", total: rem, type: "timed", stage: "dev", desc: "最終靜置等待。" });
+            }
+            drWorkflow.push({ name: "顯影: 傾倒藥液", total: 10, type: "timed", stage: "dev", desc: "立即且迅速地將顯影液完全倒出！" });
+            drWorkflow.push({ name: "停影 (STOP BATH)", total: 30, type: "timed", desc: "中和顯影液。連續翻轉30秒。" });
+            drWorkflow.push({ name: "定影: 首期攪拌", total: 60, type: "timed", desc: "第一分鐘：連續攪拌翻轉。" });
+            drWorkflow.push({ name: "定影: 首期靜置", total: 60, type: "timed", desc: "第二分鐘：完全靜置。" });
+            
+            let fixRem = 180; 
+            let fixRound = 1;
+            while(fixRem > 0) {
+                drWorkflow.push({ name: "定影: 循環攪拌 " + fixRound, total: 10, type: "timed", desc: "每分鐘前10秒週期攪拌。" });
+                drWorkflow.push({ name: "定影: 循環靜置 " + fixRound, total: 50, type: "timed", desc: "靜置50秒。" });
+                fixRem -= 60; fixRound++;
+            }
+
+            drWorkflow.push({ name: "水洗 (WASH)", type: "manual", desc: "【無須計時】注入清水 ➔ 翻轉 5 次 ➔ 倒乾。" });
+            drWorkflow.push({ name: "海波去除液 (HYPO CLEAR)", total: 300, type: "timed", desc: "海波消除，全程維持連續翻轉攪拌 5 分鐘。" });
+            drWorkflow.push({ name: "最終省水水洗", type: "manual", desc: "【無須計時】合併手動閉環水洗：\n1. 注入清水 ➔ 翻轉 10 次 ➔ 倒乾\n2. 注入清水 ➔ 翻轉 20 次 ➔ 倒乾" });
+            drWorkflow.push({ name: "去水斑 (WETTING AGENT)", total: 60, type: "timed", desc: "潤濕去水斑，靜置浸泡 1 分鐘，切勿攪拌。" });
+
+            drCurrentIndex = 0;
+            renderWorkflowUI();
+        }
+
+        function renderWorkflowUI() {
+            const list = document.getElementById('drWorkflowList');
+            let totalSeconds = 0;
+            drWorkflow.forEach(w => { if(w.total) totalSeconds += w.total; });
+            
+            document.getElementById('drTotalRemaining').textContent = "預估總時: " + formatTime(totalSeconds);
+            
+            list.innerHTML = drWorkflow.map((w, idx) => {
+                let statusClass = idx < drCurrentIndex ? 'completed' : idx === drCurrentIndex ? 'active' : '';
+                let timeStr = w.type === 'manual' ? 'MANUAL' : formatTime(w.total);
+                return '<li class="workflow-item ' + statusClass + '"><span>' + w.name + '</span><strong>' + timeStr + '</strong></li>';
+            }).join('');
+
+            const cur = drWorkflow[drCurrentIndex];
+            if(cur) {
+                document.getElementById('drCurrentStage').textContent = cur.name;
+                document.getElementById('drTimerDisplay').textContent = cur.type === 'manual' ? "MANUAL" : formatTime(cur.total);
+                document.getElementById('drAgitationDesc').textContent = cur.desc;
+                document.getElementById('drTimerDisplay').classList.remove('pour-out-mode');
+                
+                if(cur.type === 'manual') {
+                    document.getElementById('drStartBtn').style.display = 'none';
+                    document.getElementById('drNextBtn').style.display = 'block';
+                } else {
+                    document.getElementById('drStartBtn').style.display = 'block';
+                    document.getElementById('drNextBtn').style.display = 'none';
+                }
+            } else {
+                document.getElementById('drCurrentStage').textContent = "ALL DONE";
+                document.getElementById('drTimerDisplay').textContent = "00:00";
+                document.getElementById('drAgitationDesc').textContent = "🎉 沖洗程序已全部神聖完成！底片已可進行晾乾。";
+                playBeep(880, 1000);
+            }
+        }
+
+        function startDarkroomTimer() {
+            clearInterval(drTimer);
+            const cur = drWorkflow[drCurrentIndex];
+            if(!cur || cur.type === 'manual') return;
+
+            let left = cur.total;
+            document.getElementById('drStartBtn').disabled = true;
+
+            drTimer = setInterval(() => {
+                left--;
+                document.getElementById('drTimerDisplay').textContent = formatTime(left);
+                
+                if(cur.name === "顯影: 傾倒藥液" || (cur.stage === "dev" && left <= 10 && drWorkflow[drCurrentIndex+1]?.name === "顯影: 傾倒藥液")) {
+                    document.getElementById('drTimerDisplay').classList.add('pour-out-mode');
+                    if(left % 2 === 0) playBeep(600, 100);
+                }
+
+                if(left <= 3 && left > 0) playBeep(440, 150);
+
+                if(left <= 0) {
+                    clearInterval(drTimer);
+                    playBeep(880, 500);
+                    
+                    let nextW = drWorkflow[drCurrentIndex + 1];
+                    drCurrentIndex++;
+                    renderWorkflowUI();
+                    
+                    if(nextW && nextW.type === "timed" && (cur.name.includes("預濕") || cur.stage === "dev" || cur.name.includes("停影"))) {
+                        startDarkroomTimer(); 
+                    } else {
+                        clearInterval(drTimer);
+                    }
+                }
+            }, 1000);
+        }
+
+        function nextDarkroomStep() {
+            clearInterval(drTimer);
+            drCurrentIndex++;
+            renderWorkflowUI();
+        }
+
+        function formatTime(s) {
+            let m = Math.floor(s / 60); let sec = s % 60;
+            return m.toString().padStart(2,'0') + ":" + sec.toString().padStart(2,'0');
+        }
+
+        /* ================= ⚙️ 器材主檔室 ================= */
+        let currentGearTab = 'camera';
+        function renderDropdowns() {
+            const fill = (id, arr, getFmt = false) => { document.getElementById(id).innerHTML = arr.map(i => `<option value="${i.name}" ${getFmt ? `data-format="${i.format}"` : ''}>${i.name}</option>`).join(''); };
+            fill('camera', customCameras, true); fill('qlCamera', customCameras, true); fill('film', customFilms); fill('invFilmSelect', customFilms); fill('lens', customLenses); fill('lab', customLabs); fill('saLab', customLabs);
+            autoSetFormat();
+        }
+        function autoSetFormat() {
+            const cam = document.getElementById('camera'); const fmt = document.getElementById('format');
+            if(cam.selectedIndex === -1) return; const targetFormat = cam.options[cam.selectedIndex].getAttribute('data-format'); if (targetFormat) fmt.value = targetFormat;
+        }
+        function openGearRoom(tab) { switchGearTab(tab); openModal('gearRoomModal'); }
+        function switchGearTab(tab) {
+            currentGearTab = tab; ['camera','film','lens','lab'].forEach(t => document.getElementById(`tab-${t}`).classList.remove('active'));
+            document.getElementById(`tab-${tab}`).classList.add('active'); renderGearList(tab);
+        }
+        function renderGearList(tab) {
+            const list = document.getElementById('gearList'); let data = tab === 'camera' ? customCameras : tab === 'film' ? customFilms : tab === 'lens' ? customLenses : customLabs;
+            list.innerHTML = data.map((item, index) => {
+                let meta = tab === 'camera' ? "片幅: " + item.format : tab === 'film' ? "ISO: " + item.iso + " | 張數: " + item.exposures : '';
+                return `<div class="gear-item"><div><span>${item.name}</span>${meta ? `<span class="gear-item-meta">${meta}</span>` : ''}</div>
+                        <div class="gear-actions"><button class="btn-gear-edit" onclick="openGearEditor('${tab}', ${index})">編輯</button><button class="btn-gear-del" onclick="deleteGearItem('${tab}', ${index})">刪除</button></div></div>`;
+            }).join('');
+        }
+        function triggerAddGearFromRoom() { openGearEditor(currentGearTab, -1); }
+        function openGearEditor(type, index) {
+            document.getElementById('geType').value = type; document.getElementById('geIndex').value = index; document.getElementById('gearEditTitle').textContent = index === -1 ? '✨ 新增項目' : '💾 編輯項目';
+            document.getElementById('geFormatContainer').style.display = 'none'; document.getElementById('geFilmMetaContainer').style.display = 'none';
+            let item = { name: '', format: '全幅', iso: 400, exposures: 36 };
+            if(index !== -1) item = type === 'camera' ? customCameras[index] : type === 'film' ? customFilms[index] : type === 'lens' ? customLenses[index] : customLabs[index];
+            document.getElementById('geName').value = item.name;
+            if(type === 'camera') { document.getElementById('geFormatContainer').style.display = 'block'; document.getElementById('geFormat').value = item.format || '全幅'; } 
+            else if (type === 'film') { document.getElementById('geFilmMetaContainer').style.display = 'flex'; document.getElementById('geIso').value = item.iso || 400; document.getElementById('geExposures').value = item.exposures || 36; }
+            openModal('gearEditModal');
+        }
+        function deleteGearItem(type, index) {
+            if(!confirm('確定刪除？')) return;
+            if(type === 'camera') customCameras.splice(index, 1); if(type === 'film') customFilms.splice(index, 1); if(type === 'lens') customLenses.splice(index, 1); if(type === 'lab') customLabs.splice(index, 1);
+            saveAllGear(); renderGearList(type); renderDropdowns();
+        }
+        function saveGearItem() {
+            const type = document.getElementById('geType').value, index = parseInt(document.getElementById('geIndex').value), newName = document.getElementById('geName').value.trim();
+            if(!newName) return alert('名稱不可為空！');
+            let targetArray, newItem = { name: newName };
+            if(type === 'camera') { targetArray = customCameras; newItem.format = document.getElementById('geFormat').value; } 
+            else if(type === 'film') { targetArray = customFilms; newItem.iso = parseInt(document.getElementById('geIso').value) || 400; newItem.exposures = parseInt(document.getElementById('geExposures').value) || 36; } 
+            else if(type === 'lens') { targetArray = customLenses; } else { targetArray = customLabs; }
+            if(index === -1) targetArray.push(newItem); else targetArray[index] = newItem;
+            saveAllGear(); closeModal('gearEditModal'); renderDropdowns();
+            if(document.getElementById('gearRoomModal').classList.contains('show')) renderGearList(type);
+        }
+        function saveAllGear() { safeSetStorage('customCameras', JSON.stringify(customCameras)); safeSetStorage('customFilms', JSON.stringify(customFilms)); safeSetStorage('customLenses', JSON.stringify(customLenses)); safeSetStorage('customLabs', JSON.stringify(customLabs)); }
+
+        /* ================= 冰箱與上片 ================= */
+        function addInventory() {
+            const name = document.getElementById('invFilmSelect').value, qty = document.getElementById('invQty').value, cost = document.getElementById('invCost').value;
+            if(!name || !qty) return alert('請填寫數量');
+            inventory.push({ name, qty: parseInt(qty), purchaseDate: document.getElementById('invPurchaseDate').value, expiryDate: document.getElementById('invExpiryDate').value, cost: cost || '' });
+            safeSetStorage('filmInventory', JSON.stringify(inventory));
+            document.getElementById('invQty').value = ''; document.getElementById('invCost').value = '';
+            renderInventory();
+        }
+        function removeInventory(index) { inventory[index].qty -= 1; if (inventory[index].qty <= 0) inventory.splice(index, 1); safeSetStorage('filmInventory', JSON.stringify(inventory)); renderInventory(); }
+        let quickLoadInvIndex = -1;
+        function initQuickLoad(index) { quickLoadInvIndex = index; document.getElementById('qlFilmNameDisplay').textContent = "🎞️ " + inventory[index].name; openModal('quickLoadModal'); }
+        function confirmQuickLoad() {
+            if(quickLoadInvIndex === -1) return; const camSelect = document.getElementById('qlCamera');
+            filmRecords.push({
+                status: '拍攝中', camera: camSelect.value, film: inventory[quickLoadInvIndex].name, format: camSelect.options[camSelect.selectedIndex].getAttribute('data-format') || '全幅', 
+                iso: document.getElementById('qlIso').value, lens: '未記錄', lighting: '自然光為主', loadDate: new Date().toISOString().split('T')[0], unloadDate: '', labDate: '', lab: '未指定', filmCost: inventory[quickLoadInvIndex].cost || '', labCost: '', driveLink: '', notes: ''
+            });
+            inventory[quickLoadInvIndex].qty -= 1; if(inventory[quickLoadInvIndex].qty <= 0) inventory.splice(quickLoadInvIndex, 1);
+            safeSetStorage('filmTrackerRecords', JSON.stringify(filmRecords)); safeSetStorage('filmInventory', JSON.stringify(inventory));
+            closeModal('quickLoadModal'); renderInventory(); renderRecords(); renderStats();
+        }
+        
+        /* 修正報錯：徹底解開這裡的範本字串內部單引號衝突 */
+        function renderInventory() {
+            const list = document.getElementById('inventoryList'); list.innerHTML = '';
+            if(inventory.length === 0) { list.innerHTML = '<p style="text-align:center; color:var(--text-sub); font-size:13px;">冰箱目前是空的</p>'; return; }
+            inventory.forEach((item, idx) => {
+                let currentCost = item.cost ? item.cost : "未標";
+                list.innerHTML += '<div class="fridge-item"><div style="flex:1;"><strong>' + item.name + '</strong> × ' + item.qty + '卷<br><span style="color:var(--text-sub); font-size:12px;">成本: $' + currentCost + '</span></div>' +
+                                 '<div style="display:flex; gap:6px;"><button class="btn-inline" style="background:var(--text-main); color:var(--bg-color);" onclick="initQuickLoad(' + idx + ')">📷 上片</button><button class="btn-inline" onclick="removeInventory(' + idx + ')">消耗</button></div></div>';
+            });
+        }
+
+        /* ================= 戰情儀表板統計與 Chart.js 深度配置 ================= */
+        function renderStats() {
+            const statsArea = document.getElementById('statsArea'); 
+            if (filmRecords.length === 0) { statsArea.innerHTML = '<p style="text-align:center; color:var(--text-sub); font-size:14px;">尚無紀錄資料</p>'; return; }
+            let totalCost = 0, loadedCount = 0, labCount = 0;
+            filmRecords.forEach(r => {
+                totalCost += (parseInt(r.filmCost)||0) + (parseInt(r.labCost)||0);
+                if (r.status === '拍攝中') loadedCount++;
+                if (r.status === '送洗中') labCount++;
+            });
+            statsArea.innerHTML = `
+                <div class="dashboard-grid">
+                    <div class="dash-card full-width" style="align-items: center; border-left: 4px solid var(--accent);">
+                        <h4>🔥 總燃燒金額</h4><p class="value accent">NT$ ${totalCost.toLocaleString()}</p>
+                        <span style="font-size:13px; color:var(--text-sub); margin-top:4px;">累計消耗 ${filmRecords.length} 卷</span>
+                    </div>
+                    <div class="dash-card"><h4>📷 拍攝中</h4><p class="value">${loadedCount}</p></div>
+                    <div class="dash-card"><h4>🧪 送洗中</h4><p class="value">${labCount}</p></div>
+                </div>`;
+            if (document.getElementById('statsContainer').style.display === 'block') { renderStatsCharts(); }
+        }
+
+        function renderStatsCharts() {
+            let isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            let textColor = isDark ? '#e8e8e8' : '#2d2d2d';
+            let gridColor = isDark ? '#333333' : '#eaeaea';
+
+            let filmCounts = {}, gearCounts = {};
+            filmRecords.forEach(r => {
+                if (r.film) filmCounts[r.film] = (filmCounts[r.film] || 0) + 1;
+                if (r.camera) gearCounts[r.camera] = (gearCounts[r.camera] || 0) + 1;
+            });
+
+            if(filmChartInstance) filmChartInstance.destroy();
+            if(gearChartInstance) gearChartInstance.destroy();
+
+            const ctxFilm = document.getElementById('filmChart').getContext('2d');
+            filmChartInstance = new Chart(ctxFilm, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(filmCounts),
+                    datasets: [{
+                        data: Object.values(filmCounts),
+                        backgroundColor: ['#e67e22', '#d35400', '#f1c40f', '#34495e', '#7f8c8d'],
+                        borderColor: isDark ? '#1e1e1e' : '#ffffff', borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom', labels: { color: textColor, font: { size: 10 } } } },
+                    animation: { duration: 1200, easing: 'easeOutQuart' }
+                }
+            });
+
+            const ctxGear = document.getElementById('gearChart').getContext('2d');
+            gearChartInstance = new Chart(ctxGear, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(gearCounts),
+                    datasets: [{
+                        label: '出片卷數', data: Object.values(gearCounts),
+                        backgroundColor: 'rgba(230, 126, 34, 0.75)', borderColor: '#e67e22', borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { color: gridColor }, ticks: { color: textColor, stepSize: 1 } },
+                        y: { grid: { display: false }, ticks: { color: textColor } }
+                    }
+                }
+            });
+        }
+
+        /* ================= 表單基本維護邏輯 ================= */
+        let editingIndex = -1;
+        function openMainForm(index) {
+            editingIndex = index; document.getElementById('formModalTitle').textContent = index === -1 ? '✨ 新增紀錄' : '💾 編輯紀錄';
+            if(index === -1) {
+                document.getElementById('status').value = '拍攝中'; applyDateVal('loadDate', ''); document.getElementById('loadDate').valueAsDate = new Date();
+                document.getElementById('iso').value = '正常'; ['unloadDate','labDate','filmCost','labCost','driveLink','notes'].forEach(id => document.getElementById(id).value = '');
+            } else {
+                const r = filmRecords[index]; document.getElementById('status').value = r.status; document.getElementById('camera').value = r.camera;
+                document.getElementById('film').value = r.film; document.getElementById('format').value = r.format; document.getElementById('iso').value = r.iso; 
+                document.getElementById('lens').value = r.lens || '未記錄'; document.getElementById('lab').value = r.lab || '未指定'; document.getElementById('lighting').value = r.lighting || '自然光為主'; 
+                applyDateVal('loadDate', r.loadDate); applyDateVal('unloadDate', r.unloadDate); applyDateVal('labDate', r.labDate);
+                document.getElementById('filmCost').value = r.filmCost || ''; document.getElementById('labCost').value = r.labCost || ''; document.getElementById('driveLink').value = r.driveLink || ''; document.getElementById('notes').value = r.notes || '';
+            }
+            toggleDynamicFields(); openModal('mainFormModal');
+        }
+        function toggleDynamicFields() {
+            const status = document.getElementById('status').value;
+            document.getElementById('unloadDateContainer').style.display = (status !== '拍攝中') ? 'block' : 'none';
+            document.getElementById('labDateContainer').style.display = (status === '送洗中' || status === '已完成') ? 'block' : 'none';
+            document.getElementById('costArchiveFields').style.display = (status === '已完成') ? 'block' : 'none';
+        }
+        function saveRecord() {
+            const record = {
+                status: document.getElementById('status').value, camera: document.getElementById('camera').value, film: document.getElementById('film').value, format: document.getElementById('format').value,
+                iso: document.getElementById('iso').value, lens: document.getElementById('lens').value, lighting: document.getElementById('lighting').value, loadDate: document.getElementById('loadDate').value,
+                unloadDate: document.getElementById('unloadDate').value, labDate: document.getElementById('labDate').value, lab: document.getElementById('lab').value, filmCost: document.getElementById('filmCost').value,
+                labCost: document.getElementById('labCost').value, driveLink: document.getElementById('driveLink').value, notes: document.getElementById('notes').value
+            };
+            if (editingIndex === -1) filmRecords.push(record); else filmRecords[editingIndex] = record;
+            safeSetStorage('filmTrackerRecords', JSON.stringify(filmRecords)); closeModal('mainFormModal'); renderRecords(); renderStats(); 
+        }
+        function deleteRecord(index) { if(confirm('確定刪除此紀錄？')) { filmRecords.splice(index, 1); safeSetStorage('filmTrackerRecords', JSON.stringify(filmRecords)); renderRecords(); renderStats(); } }
+
+        let smartActionRecIndex = -1, smartActionType = '';
+        function triggerSmartAction(index, actionType) {
+            smartActionRecIndex = index; smartActionType = actionType; const today = new Date().toISOString().split('T')[0];
+            if (actionType === 'unload') { filmRecords[index].status = '已退片'; filmRecords[index].unloadDate = today; safeSetStorage('filmTrackerRecords', JSON.stringify(filmRecords)); renderRecords(); renderStats(); } 
+            else if (actionType === 'lab') { document.getElementById('saTitle').textContent = '🧪 準備送洗'; document.getElementById('saLabSection').style.display = 'block'; document.getElementById('saDoneSection').style.display = 'none'; document.getElementById('saLab').value = filmRecords[index].lab || '未指定'; openModal('smartActionModal'); }
+            else if (actionType === 'done') { document.getElementById('saTitle').textContent = '✅ 歸檔圖檔'; document.getElementById('saLabSection').style.display = 'none'; document.getElementById('saDoneSection').style.display = 'block'; document.getElementById('saLabCost').value = filmRecords[index].labCost || ''; document.getElementById('saDriveLink').value = filmRecords[index].driveLink || ''; openModal('smartActionModal'); }
+        }
+        function confirmSmartAction() {
+            if(smartActionRecIndex === -1) return; const today = new Date().toISOString().split('T')[0], r = filmRecords[smartActionRecIndex];
+            if(smartActionType === 'lab') { r.status = '送洗中'; r.labDate = today; r.lab = document.getElementById('saLab').value; } 
+            else if (smartActionType === 'done') { r.status = '已完成'; r.labCost = document.getElementById('saLabCost').value; r.driveLink = document.getElementById('saDriveLink').value; }
+            safeSetStorage('filmTrackerRecords', JSON.stringify(filmRecords)); closeModal('smartActionModal'); renderRecords(); renderStats();
+        }
+
+        function renderRecords() {
+            const list = document.getElementById('recordList'); list.innerHTML = '';
+            const filterVal = document.getElementById('filterStatus').value, query = document.getElementById('searchInput').value.toLowerCase().trim();
+            let displayRecords = filmRecords.map((r, idx) => ({ ...r, originalIndex: idx })).reverse();
+            if (filterVal !== '全部') displayRecords = displayRecords.filter(r => r.status === filterVal);
+            if (query !== '') displayRecords = displayRecords.filter(r => `${r.camera} ${r.film} ${r.notes} ${r.status}`.toLowerCase().includes(query));
+            
+            if(displayRecords.length === 0) { list.innerHTML = '<p style="text-align:center; color:var(--text-sub); margin-top:30px;">目前沒有符合的紀錄！</p>'; return; }
+            displayRecords.forEach((record) => {
+                const realIndex = record.originalIndex;
+                let badgeClass = record.status === '已退片' ? 'status-unloaded' : record.status === '送洗中' ? 'status-lab' : record.status === '已完成' ? 'status-done' : 'status-shooting';
+                let quickBtnHtml = record.status === '拍攝中' ? `<button class="btn-quick-action" onclick="triggerSmartAction(${realIndex}, 'unload')">👉 一鍵退片</button>` : record.status === '已退片' ? `<button class="btn-quick-action" onclick="triggerSmartAction(${realIndex}, 'lab')">🧪 一鍵送洗</button>` : record.status === '送洗中' ? `<button class="btn-quick-action" onclick="triggerSmartAction(${realIndex}, 'done')">✅ 歸檔圖檔</button>` : '';
+                const totalCost = (parseInt(record.filmCost) || 0) + (parseInt(record.labCost) || 0);
+                const driveBtn = record.driveLink ? `<button class="btn-link" onclick="window.open('${record.driveLink}', '_blank')">🔗 看圖</button>` : '';
+                list.innerHTML += `<div class="record-item">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start;"><h4>${record.camera}<br><span style="font-size:14px; color:var(--text-sub);">${record.film}</span></h4><div><span class="status-badge ${badgeClass}">${record.status}</span></div></div>
+                    <div class="inner-box"><p style="margin:0;"><strong>設定：</strong>${record.lens || '未記錄'} / ${record.iso}</p></div>
+                    <p style="display:flex; justify-content:space-between; margin-top:12px;"><span><strong>備註：</strong>${record.notes || '無'}</span> <strong class="record-cost">$${totalCost}</strong></p>${quickBtnHtml}
+                    <div class="action-buttons"><button class="btn-edit" onclick="openMainForm(${realIndex})">編輯</button>${driveBtn}<button class="btn-delete" onclick="deleteRecord(${realIndex})">刪除</button></div></div>`;
+            });
+        }
+
+        /* 備份與導出機制 */
+        function exportToCSV() { let csv = "\uFEFF狀態,相機,底片,感光度,成本\n" + filmRecords.map(r => `${r.status},${r.camera},${r.film},${r.iso},${(parseInt(r.filmCost)||0)+(parseInt(r.labCost)||0)}`).join('\n'); const l = document.createElement("a"); l.href = "data:text/csv;charset=utf-8," + encodeURI(csv); l.download = "FilmAsset.csv"; l.click(); }
+        function exportBackup() { const d = { filmTrackerRecords: filmRecords, filmInventory: inventory, customCameras, customFilms, customLenses, customLabs }; const l = document.createElement("a"); l.href = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(d)); l.download = `Backup_${new Date().toISOString().split('T')[0]}.json`; l.click(); }
+        function importBackupFile(e) { const file = e.target.files[0]; if (!file || !confirm("⚠️ 將完全覆蓋現有資料！確定？")) return; const r = new FileReader(); r.onload = function(ev) { try { const d = JSON.parse(ev.target.result); if(d.filmTrackerRecords) safeSetStorage('filmTrackerRecords', JSON.stringify(d.filmTrackerRecords)); if(d.filmInventory) safeSetStorage('filmInventory', JSON.stringify(d.filmInventory)); alert("✅ 匯入成功！"); location.reload(); } catch(err) { alert("❌ 格式錯誤"); } }; r.readAsText(file); }
+
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initApp); else initApp();
+    </script>
+
+    <link rel="manifest" href="manifest.json">
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./service-worker.js')
+                .then(reg => console.log('Service Worker 註冊成功！範疇：', reg.scope))
+                .catch(err => console.log('Service Worker 註冊失敗：', err));
+            });
+        }
+    </script>
+</body>
+</html>
